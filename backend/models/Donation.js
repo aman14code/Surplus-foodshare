@@ -29,6 +29,11 @@ const donationSchema = new mongoose.Schema({
       required: true
     }
   },
+  aiAnalysis: {
+    freshnessScore: Number,
+    description: String,
+    isEdible: Boolean
+  },
   expiresAt: { type: Date, required: true }
 }, { timestamps: true });
 

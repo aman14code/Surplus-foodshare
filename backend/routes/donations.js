@@ -32,10 +32,25 @@ router.get('/nearby', async (req, res) => {
   }
 });
 
+const multer = require('multer');
+const { analyzeFoodImage } = require('../services/aiService');
+
+// Configure multer for memory storage (we will just pass the buffer to AI)
+const upload = multer({ storage: multer.memoryStorage() });
+
 // POST a new donation
-router.post('/', async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { title, description, quantity, donorId, lng, lat, expiresAt } = req.body;
+    let aiAnalysis = null;
+
+    if (req.file) {
+      try {
+        aiAnalysis = await analyzeFoodImage(req.file.buffer, req.file.mimetype);
+      } catch (aiErr) {
+        console.error("AI processing failed, continuing without AI analysis:", aiErr);
+      }
+    }
 
     const newDonation = new Donation({
       title,
@@ -46,6 +61,7 @@ router.post('/', async (req, res) => {
         type: 'Point',
         coordinates: [parseFloat(lng), parseFloat(lat)]
       },
+      aiAnalysis,
       expiresAt: new Date(expiresAt)
     });
 

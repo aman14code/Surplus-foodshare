@@ -31,7 +31,9 @@ mongoose.connect(MONGO_URI)
 
 // Routes
 const donationRoutes = require('./routes/donations');
+const chatRoutes = require('./routes/chat');
 app.use('/api/donations', donationRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {
