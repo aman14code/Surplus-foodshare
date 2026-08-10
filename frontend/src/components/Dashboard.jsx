@@ -89,6 +89,12 @@ const Dashboard = () => {
                 <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Clock size={16} /> Expires: {new Date(donation.expiresAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                 </p>
+                {donation.aiAnalysis && (
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: donation.aiAnalysis.freshnessScore > 50 ? '#34d399' : '#fbbf24' }}>
+                    <strong>AI Freshness:</strong> {donation.aiAnalysis.freshnessScore}/100 
+                    ({donation.aiAnalysis.isEdible ? 'Edible' : 'Check Quality'})
+                  </p>
+                )}
               </div>
 
               {donation.status === 'Available' && (

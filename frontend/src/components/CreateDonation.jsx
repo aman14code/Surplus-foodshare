@@ -7,7 +7,8 @@ const CreateDonation = () => {
     title: '',
     description: '',
     quantity: '',
-    expiresAt: ''
+    expiresAt: '',
+    image: null
   });
 
   const handleSubmit = async (e) => {
@@ -25,12 +26,22 @@ const CreateDonation = () => {
     // To make populate work without a real donor, let's create a temp user first, 
     // or just let it fail gracefully. Wait, our route expects a valid ObjectId.
     // For MVP demonstration, we will just send it and let the backend handle it.
+    const formDataObj = new FormData();
+    formDataObj.append('title', formData.title);
+    formDataObj.append('description', formData.description);
+    formDataObj.append('quantity', formData.quantity);
+    formDataObj.append('expiresAt', formData.expiresAt);
+    formDataObj.append('donorId', '64f1b2c3e4d5a67890123456');
+    formDataObj.append('lng', (-122.4194 + (Math.random() * 0.02 - 0.01)).toString());
+    formDataObj.append('lat', (37.7749 + (Math.random() * 0.02 - 0.01)).toString());
+    if (formData.image) {
+      formDataObj.append('image', formData.image);
+    }
     
     try {
       const res = await fetch('http://localhost:5000/api/donations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(donationPayload)
+        body: formDataObj
       });
       
       if (res.ok) {
@@ -44,20 +55,35 @@ const CreateDonation = () => {
   };
 
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    if (e.target.name === 'image') {
+      setFormData(prev => ({ ...prev, image: e.target.files[0] }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [e.target.name]: e.target.value
+      }));
+    }
   };
 
   return (
     <div className="glass-panel" style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
       <h2>Donate Surplus Food</h2>
       <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-        Help reduce waste and feed the community. Fill out the details below to broadcast your available food.
+        Help reduce waste and feed the community. Upload an image, and our AI will assess the freshness.
       </p>
 
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Food Image (For AI Analysis)</label>
+          <input 
+            type="file" 
+            name="image"
+            accept="image/*"
+            className="form-control" 
+            onChange={handleChange}
+          />
+        </div>
+        
         <div className="form-group">
           <label>Food Item / Title</label>
           <input 

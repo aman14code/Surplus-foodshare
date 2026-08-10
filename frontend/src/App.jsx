@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Leaf } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import CreateDonation from './components/CreateDonation';
+import Chatbot from './components/Chatbot';
 import './index.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/donate" element={<CreateDonation />} />
         </Routes>
       </main>
+      <Chatbot />
     </Router>
   );
 }
