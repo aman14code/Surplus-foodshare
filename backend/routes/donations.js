@@ -34,6 +34,7 @@ router.get('/nearby', async (req, res) => {
 
 const multer = require('multer');
 const { analyzeFoodImage } = require('../services/aiService');
+const { sendSmsNotification } = require('../services/notificationService');
 
 // Configure multer for memory storage (we will just pass the buffer to AI)
 const upload = multer({ storage: multer.memoryStorage() });
@@ -86,7 +87,7 @@ router.put('/:id/claim', async (req, res) => {
     const { id } = req.params;
     const { claimedById } = req.body; // Shelter or Volunteer ID
 
-    const donation = await Donation.findById(id);
+    const donation = await Donation.findById(id).populate('donor');
     if (!donation) {
       return res.status(404).json({ error: 'Donation not found' });
     }
@@ -99,6 +100,10 @@ router.put('/:id/claim', async (req, res) => {
     const updatedDonation = await donation.save();
 
     req.io.to('food_feed').emit('donation_claimed', updatedDonation);
+
+    // Send SMS notification to donor if they have a phone number
+    const donorPhone = donation.donor?.contactPhone || '+1234567890';
+    await sendSmsNotification(donorPhone, `Your donation "${donation.title}" has been claimed!`);
 
     res.json(updatedDonation);
   } catch (err) {
