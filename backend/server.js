@@ -30,10 +30,16 @@ mongoose.connect(MONGO_URI)
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+const authRoutes = require('./routes/auth');
 const donationRoutes = require('./routes/donations');
 const chatRoutes = require('./routes/chat');
+const analyticsRoutes = require('./routes/analytics');
+const routingRoutes = require('./routes/routing');
+app.use('/api/auth', authRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/routes', routingRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {

@@ -47,7 +47,7 @@ const Dashboard = () => {
       const res = await fetch(`http://localhost:5000/api/donations/${id}/claim`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claimedById: 'mock_shelter_id' })
+        body: JSON.stringify({ claimedById: '64f1b2c3e4d5a67890123456' })
       });
       if (!res.ok) throw new Error('Failed to claim');
       
